@@ -13,9 +13,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite
 
-COPY . /var/www/html
+COPY . /tmp/html-temp
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+COPY ./docker-entrypoint.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 80
