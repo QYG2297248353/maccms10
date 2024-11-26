@@ -111,7 +111,7 @@ class Vod extends Base {
         return ['code'=>1,'msg'=>lang('data_list'),'page'=>$page,'pagecount'=>ceil($total/$limit),'limit'=>$limit,'total'=>$total,'list'=>$list];
     }
 
-    public function listCacheData($lp)
+    public function listCacheData($lp,$field='*')
     {
         if(!is_array($lp)){
             $lp = json_decode($lp,true);
@@ -574,7 +574,7 @@ class Vod extends Base {
             $cachetime = $GLOBALS['config']['app']['cache_time'];
         }
         if($GLOBALS['config']['app']['cache_core']==0 || empty($res)) {
-            $res = $this->listData($where, $order, $page, $num, $start,'*',1, $totalshow);
+            $res = $this->listData($where, $order, $page, $num, $start,$field,1, $totalshow);
             if($GLOBALS['config']['app']['cache_core']==1) {
                 Cache::set($cach_name, $res, $cachetime);
             }
@@ -888,7 +888,7 @@ class Vod extends Base {
     public function  createRepeatCache()
     {
         Db::execute('DROP TABLE IF EXISTS ' . config('database.prefix') . 'vod_repeat');
-        Db::execute('CREATE TABLE `' . config('database.prefix') . 'vod_repeat` (`id1` int unsigned DEFAULT NULL, `name1` varchar(255) NOT NULL DEFAULT \'\') ENGINE=InnoDB');
+        Db::execute('CREATE TABLE `' . config('database.prefix') . 'vod_repeat` (`id1` int unsigned DEFAULT NULL, `name1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT \'\') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
         Db::execute('ALTER TABLE `' . config('database.prefix') . 'vod_repeat` ADD INDEX `name1` (`name1`(100))');
         Db::execute('INSERT INTO `' . config('database.prefix') . 'vod_repeat` (SELECT min(vod_id)as id1,vod_name as name1 FROM ' .
             config('database.prefix') . 'vod GROUP BY name1 HAVING COUNT(name1)>1)');
